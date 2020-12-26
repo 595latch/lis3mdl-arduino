@@ -97,22 +97,38 @@ void LIS3MDL::enableDefault(void)
 {
   if (_device == device_LIS3MDL)
   {
-    // 0x70 = 0b01110000
-    // OM = 11 (ultra-high-performance mode for X and Y); DO = 100 (10 Hz ODR)
-    writeReg(CTRL_REG1, 0x70);
+    // 0xF0 = 0b11110000
+    // TEMP_EN = 1; OM = 11 (ultra-high-performance mode for X and Y); DO = 100 (10 Hz ODR)
+    writeReg(CTRL_REG1, 0xF0);
 
     // 0x00 = 0b00000000
     // FS = 00 (+/- 4 gauss full scale)
     writeReg(CTRL_REG2, 0x00);
 
-    // 0x00 = 0b00000000
-    // MD = 00 (continuous-conversion mode)
-    writeReg(CTRL_REG3, 0x00);
+    // 0x00 = 0b00000011
+    // MD = 11 (Power Down Mode)
+    writeReg(CTRL_REG3, 0x03);
 
     // 0x0C = 0b00001100
     // OMZ = 11 (ultra-high-performance mode for Z)
     writeReg(CTRL_REG4, 0x0C);
   }
+}
+
+void LIS3MDL::activate(void){
+	// 0x00 = 0b00000000
+	// MD = 00 (Continuous Conversion Mode);
+	uint8_t temp_byte = readReg(CTRL_REG3);
+	temp_byte &= 0xFC;
+	writeReg(CTRL_REG3,temp_byte);
+}
+
+void LIS3MDL::dectivate(void){
+	// 0x11 = 0b00000011
+	// MD = 11 (Power Down Mode);
+	uint8_t temp_byte = readReg(CTRL_REG3);
+	temp_byte |= 0x03;
+	writeReg(CTRL_REG3,temp_byte);
 }
 
 // Writes a mag register
@@ -146,10 +162,10 @@ void LIS3MDL::read()
   // assert MSB to enable subaddress updating
   Wire.write(OUT_X_L | 0x80);
   Wire.endTransmission();
-  Wire.requestFrom(address, (uint8_t)6);
+  Wire.requestFrom(address, (uint8_t)8);
 
   uint16_t millis_start = millis();
-  while (Wire.available() < 6)
+  while (Wire.available() < 8)
   {
     if (io_timeout > 0 && ((uint16_t)millis() - millis_start) > io_timeout)
     {
@@ -164,11 +180,14 @@ void LIS3MDL::read()
   uint8_t yhm = Wire.read();
   uint8_t zlm = Wire.read();
   uint8_t zhm = Wire.read();
+	uint8_t tlm = Wire.read();
+	uint8_t thm = Wire.read();
 
   // combine high and low bytes
   m.x = (int16_t)(xhm << 8 | xlm);
   m.y = (int16_t)(yhm << 8 | ylm);
   m.z = (int16_t)(zhm << 8 | zlm);
+  m.t = (int16_t)(thm << 8 | tlm);
 }
 
 void LIS3MDL::vector_normalize(vector<float> *a)

@@ -8,7 +8,7 @@ class LIS3MDL
   public:
     template <typename T> struct vector
     {
-      T x, y, z;
+      T x, y, z, t;
     };
 
     enum deviceType { device_LIS3MDL, device_auto };
@@ -88,6 +88,3 @@ template <typename Ta, typename Tb> float LIS3MDL::vector_dot(const vector<Ta> *
 }
 
 #endif
-
-
-
