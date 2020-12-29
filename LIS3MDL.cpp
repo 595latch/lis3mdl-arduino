@@ -123,7 +123,7 @@ void LIS3MDL::activate(void){
 	writeReg(CTRL_REG3,temp_byte);
 }
 
-void LIS3MDL::dectivate(void){
+void LIS3MDL::deactivate(void){
 	// 0x11 = 0b00000011
 	// MD = 11 (Power Down Mode);
 	uint8_t temp_byte = readReg(CTRL_REG3);
@@ -187,7 +187,7 @@ void LIS3MDL::read()
   m.x = (int16_t)(xhm << 8 | xlm);
   m.y = (int16_t)(yhm << 8 | ylm);
   m.z = (int16_t)(zhm << 8 | zlm);
-  m.t = (int16_t)(thm << 8 | tlm);
+  t = (int16_t)(thm << 8 | tlm);
 }
 
 void LIS3MDL::vector_normalize(vector<float> *a)

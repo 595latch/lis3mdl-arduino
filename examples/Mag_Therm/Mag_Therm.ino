@@ -39,9 +39,9 @@ void loop()
 {
   compass.read();
 
-  Serial.print("X: "); Serial.print(compass.m.x,3);
-	Serial.print("\tY: "); Serial.print(compass.m.y,3);
-	Serial.print("\tZ: "); Serial.println(compass.m.z,3);
+  Serial.print("X: "); Serial.print(compass.m.x);
+	Serial.print("\tY: "); Serial.print(compass.m.y);
+	Serial.print("\tZ: "); Serial.println(compass.m.z);
 
   delay(100);
 }

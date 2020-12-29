@@ -8,9 +8,10 @@ class LIS3MDL
   public:
     template <typename T> struct vector
     {
-      T x, y, z, t;
+      T x, y, z;
     };
 
+		int t;
     enum deviceType { device_LIS3MDL, device_auto };
     enum sa1State { sa1_low, sa1_high, sa1_auto };
 
@@ -47,6 +48,8 @@ class LIS3MDL
     LIS3MDL(void);
 
     bool init(deviceType device = device_auto, sa1State sa1 = sa1_auto);
+		void activate(void);
+		void deactivate(void);
     deviceType getDeviceType(void) { return _device; }
 
     void enableDefault(void);
